@@ -24,7 +24,7 @@ public class PlayerDao {
             transaction.commit();
             return player;
         } catch (Exception e) {
-            throw new RuntimeException("Error creating player!", e); // Логирование или повторное выбрасывание исключения
+            throw new RuntimeException("Error creating player!", e);
         }
     }
 
