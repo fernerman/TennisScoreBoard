@@ -1,0 +1,53 @@
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Java specific
+out/
+target/
+
+# Hibernate specific
+hibernate.cfg.xml
+hibernate.properties
+*.hbm.xml
+
+# Servlet specific (for web applications)
+*.war
+*.ear
+*.class
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Gradle
+.gradle/
+build/
+
+# Maven
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+
+# Eclipse project files
+.project
+.classpath
+.settings/
+
+# JetBrains Rider
+.idea/
+
+# Other IDEs
+.vscode/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
