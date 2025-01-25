@@ -6,11 +6,12 @@ import org.project.tennisscoreboard.model.Player;
 import org.project.tennisscoreboard.util.SessionFactoryUtil;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class PlayerDao {
-    public static final String GET_NEW_PLAYER_BY_NAME_HQL = "FROM PLAYERS e WHERE e.name = :name";
+    public static final String GET_NEW_PLAYER_BY_NAME_HQL = "FROM Player e WHERE e.name = :NAME";
 
-    public Player create(String username) {
+    public UUID create(String username) {
         Transaction transaction = null;
         Optional<Player> existPlayer = existPlayer(username);
         if (existPlayer.isPresent()) {
@@ -22,7 +23,7 @@ public class PlayerDao {
             player.setName(username);
             session.persist(player);
             transaction.commit();
-            return player;
+            return player.getId();
         } catch (Exception e) {
             throw new RuntimeException("Error creating player!", e);
         }
@@ -34,6 +35,13 @@ public class PlayerDao {
                     .setParameter("NAME", username)
                     .uniqueResult();
             return Optional.ofNullable(player);
+        }
+    }
+
+    public Player findPlayerById(UUID playerPitcherId) {
+        try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+            // Используем get() для получения объекта по идентификатору
+            return session.get(Player.class, playerPitcherId); // Вернет null, если не найден
         }
     }
 }
