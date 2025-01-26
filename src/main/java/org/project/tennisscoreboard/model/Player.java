@@ -1,24 +1,27 @@
 package org.project.tennisscoreboard.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
-@Table(name = "PLAYERS")
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "PLAYERS")
+
 public class Player {
-    @Id
-    @GeneratedValue
-    @Column(name = "ID")
-    private UUID id;
-    @Column(name = "NAME")
-    private String name;
-    @Transient
-    private Score score;
+
+  @Id
+  @GeneratedValue
+  @Column(name = "ID")
+  private UUID id;
+  @Column(name = "NAME")
+  private String name;
 }
