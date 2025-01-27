@@ -5,41 +5,32 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
-import org.project.tennisscoreboard.exception.MatchNotFoundException;
-import org.project.tennisscoreboard.exception.PlayerNotFoundException;
-import org.project.tennisscoreboard.exception.PlayerNotValidNameException;
+import org.project.tennisscoreboard.exception.PlayerInvalidNameException;
 import org.project.tennisscoreboard.model.Match;
 import org.project.tennisscoreboard.service.MatchService;
-import org.project.tennisscoreboard.util.Checker;
+import org.project.tennisscoreboard.util.PlayerValidationUtils;
 
 @WebServlet("/new-match")
 public class CreateNewMatchServlet extends HttpServlet {
 
-  public static final String NAME_PITCHER_PARAMETER = "name";
-  public static final String NAME_HOST_PARAMETER = "name2";
+  public static final String PITCHER_PARAMETER_NAME = "pitcher-name";
+  public static final String HOST_PARAMETER_NAME = "host-name";
   private final MatchService matchService = new MatchService();
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException {
     try {
-      String namePitcher = request.getParameter(NAME_PITCHER_PARAMETER);
-      String nameHost = request.getParameter(NAME_HOST_PARAMETER);
-      Checker.validateNameAndSurnamePlayer(nameHost);
-      Checker.validateNameAndSurnamePlayer(namePitcher);
+      String namePitcher = request.getParameter(PITCHER_PARAMETER_NAME);
+      String nameHost = request.getParameter(HOST_PARAMETER_NAME);
+      PlayerValidationUtils.validateNameAndSurnamePlayer(nameHost);
+      PlayerValidationUtils.validateNameAndSurnamePlayer(namePitcher);
 
-      Optional<Match> match = matchService.createMatch(namePitcher, nameHost);
-      if (match.isEmpty()) {
-        throw new MatchNotFoundException("Match not found");
-      }
-      response.sendRedirect("/match-score?uuid=" + match.get().getId());
-    } catch (PlayerNotValidNameException e) {
+      Match match = matchService.createMatch(namePitcher, nameHost);
+      response.sendRedirect("/match-score?uuid=" + match.getId());
+    } catch (PlayerInvalidNameException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().write("Invalid player name: " + e.getMessage());
-    } catch (PlayerNotFoundException | MatchNotFoundException e) {
-      response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-      response.getWriter().write(e.getMessage());
     } catch (Exception e) {
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
