@@ -13,7 +13,7 @@ public class PlayerDao {
 
   public Optional<Player> create(String username) throws SQLException {
     Transaction transaction = null;
-    Optional<Player> existPlayer = existPlayer(username);
+    Optional<Player> existPlayer = getPlayerByName(username);
     if (existPlayer.isPresent()) {
       return existPlayer;
     }
@@ -30,10 +30,10 @@ public class PlayerDao {
         throw new SQLException();
       }
     }
-    return existPlayer;
+    return Optional.empty();
   }
 
-  public Optional<Player> existPlayer(String username) {
+  public Optional<Player> getPlayerByName(String username) {
     try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
       Player player = session.createQuery(GET_NEW_PLAYER_BY_NAME_HQL, Player.class)
           .setParameter("NAME", username)
