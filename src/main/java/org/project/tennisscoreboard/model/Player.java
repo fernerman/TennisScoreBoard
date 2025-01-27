@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "PLAYERS")
-
 public class Player {
 
   @Id
   @GeneratedValue
   @Column(name = "ID")
   private UUID id;
+
   @Column(name = "NAME")
   private String name;
 }
