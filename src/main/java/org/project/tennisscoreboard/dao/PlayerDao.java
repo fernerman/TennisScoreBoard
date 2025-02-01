@@ -17,6 +17,7 @@ public class PlayerDao {
     if (existPlayer.isPresent()) {
       return existPlayer;
     }
+
     try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
       transaction = session.beginTransaction();
       Player player = new Player();
@@ -37,7 +38,7 @@ public class PlayerDao {
     try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
       Player player = session.createQuery(GET_NEW_PLAYER_BY_NAME_HQL, Player.class)
           .setParameter("NAME", username)
-          .uniqueResult();
+          .getSingleResult();
       return Optional.ofNullable(player);
     }
   }

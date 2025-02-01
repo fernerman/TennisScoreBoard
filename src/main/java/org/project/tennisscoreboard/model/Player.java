@@ -22,6 +22,6 @@ public class Player {
   @Column(name = "ID")
   private UUID id;
 
-  @Column(name = "NAME")
+  @Column(name = "NAME", unique = true)
   private String name;
 }

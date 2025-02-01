@@ -23,8 +23,8 @@ public class CreateNewMatchServlet extends HttpServlet {
     try {
       String namePitcher = request.getParameter(PITCHER_PARAMETER_NAME);
       String nameHost = request.getParameter(HOST_PARAMETER_NAME);
-      PlayerValidationUtils.validateNameAndSurnamePlayer(nameHost);
-      PlayerValidationUtils.validateNameAndSurnamePlayer(namePitcher);
+      PlayerValidationUtils.validateName(nameHost);
+      PlayerValidationUtils.validateName(namePitcher);
 
       Match match = matchService.createMatch(namePitcher, nameHost);
       response.sendRedirect("/match-score?uuid=" + match.getId());

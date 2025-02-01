@@ -5,9 +5,9 @@ import org.project.tennisscoreboard.exception.PlayerInvalidNameException;
 public class PlayerValidationUtils {
 
   public static final int PLAYER_NAME_LENGTH = 10;
-  public static final String REGULAR_EXPRESSION = "[A-Z][a-zA-Z]*";
+  public static final String NAME_SURNAME_REGEX = "[A-Z][a-zA-Z]*";
 
-  public static void validateNameAndSurnamePlayer(String fullName)
+  public static void validateName(String fullName)
       throws PlayerInvalidNameException {
 
     if (fullName == null || fullName.isEmpty()) {
@@ -23,9 +23,10 @@ public class PlayerValidationUtils {
 
     if (name.length() > PLAYER_NAME_LENGTH || surname.length() > PLAYER_NAME_LENGTH) {
       throw new PlayerInvalidNameException(
-          "Name must not exceed " + PLAYER_NAME_LENGTH + " characters.");
+          String.format("Name must not exceed %d characters.", PLAYER_NAME_LENGTH)
+      );
     }
-    if (!name.matches(REGULAR_EXPRESSION) || !surname.matches(REGULAR_EXPRESSION)) {
+    if (!name.matches(NAME_SURNAME_REGEX) || !surname.matches(NAME_SURNAME_REGEX)) {
       throw new PlayerInvalidNameException(
           "Name must start with an uppercase letter and contain only English letters.");
     }
