@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.UUID;
 import org.project.tennisscoreboard.exception.PlayerInvalidNameException;
-import org.project.tennisscoreboard.model.Match;
 import org.project.tennisscoreboard.service.MatchService;
 import org.project.tennisscoreboard.util.PlayerValidationUtils;
 
@@ -26,8 +26,8 @@ public class CreateNewMatchServlet extends HttpServlet {
       PlayerValidationUtils.validateName(nameHost);
       PlayerValidationUtils.validateName(namePitcher);
 
-      Match match = matchService.createMatch(namePitcher, nameHost);
-      response.sendRedirect("/match-score?uuid=" + match.getId());
+      UUID matchId = matchService.createCurrentMatch(namePitcher, nameHost);
+      response.sendRedirect("/match-score?uuid=" + matchId);
     } catch (PlayerInvalidNameException e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       response.getWriter().write("Invalid player name: " + e.getMessage());
