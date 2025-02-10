@@ -9,11 +9,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 import org.project.tennisscoreboard.dto.MatchScore;
-import org.project.tennisscoreboard.dto.WinnerLoserDTO;
+import org.project.tennisscoreboard.dto.ScoreOutputDTO;
 import org.project.tennisscoreboard.exception.MatchNotFoundException;
 import org.project.tennisscoreboard.model.CollectionMatches;
-import org.project.tennisscoreboard.model.Match;
-import org.project.tennisscoreboard.service.MatchScoreService;
 import org.project.tennisscoreboard.service.MatchService;
 
 @WebServlet("/match-score")
@@ -21,7 +19,6 @@ public class MatchScoreServlet extends HttpServlet {
 
   public static final String PARAMETER_MATCH_ID = "uuid";
   public static final String PARAMETER_WINNER_ID = "winnerId";
-  private final MatchScoreService matchScoreService = new MatchScoreService();
   private final MatchService matchService = new MatchService();
 
   @Override
@@ -37,11 +34,9 @@ public class MatchScoreServlet extends HttpServlet {
       if (matchScore == null) {
         throw new MatchNotFoundException("Match not found");
       }
-      WinnerLoserDTO newMatchResult = matchService.updateMatchScore(winnerId, matchScore);
-      if (matchScoreService.isEndMatch(newMatchResult)) {
-        Match createdMatch = matchService.createFinishedMatch(matchUuid, matchScore, winnerId);
-      }
-      //toDo сделать для фронта отправку MatchResultDTO или MatchScore
+      ScoreOutputDTO newMatchResult = matchService.updateMatchScore(matchUuid, winnerId,
+          matchScore);
+      //toDo сделать для фронта отправку MatchResultDTO
     } catch (IllegalArgumentException e) {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Wrong format UUID");
     } catch (MatchNotFoundException e) {
