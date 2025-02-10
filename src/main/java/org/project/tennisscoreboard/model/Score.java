@@ -12,7 +12,6 @@ import lombok.Setter;
 public class Score {
 
   private int point;
-  private String pointInTennisBoard;
   private int game;
   private int set;
 }
