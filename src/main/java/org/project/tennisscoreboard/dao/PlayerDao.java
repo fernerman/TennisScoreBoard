@@ -2,6 +2,7 @@ package org.project.tennisscoreboard.dao;
 
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.UUID;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.project.tennisscoreboard.model.Player;
@@ -39,6 +40,13 @@ public class PlayerDao {
       Player player = session.createQuery(GET_NEW_PLAYER_BY_NAME_HQL, Player.class)
           .setParameter("NAME", username)
           .getSingleResult();
+      return Optional.ofNullable(player);
+    }
+  }
+
+  public Optional<Player> findById(UUID id) {
+    try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+      Player player = session.find(Player.class, id);
       return Optional.ofNullable(player);
     }
   }

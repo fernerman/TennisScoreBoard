@@ -10,11 +10,13 @@ import org.project.tennisscoreboard.util.SessionFactoryUtil;
 
 public class MatchDao {
 
-  public Optional<Match> create(Player playerPitcher, Player playerHost) throws SQLException {
+  public Optional<Match> create(Player playerPitcher, Player playerHost, Player winner)
+      throws SQLException {
     Transaction transaction = null;
     Match match = new Match();
     match.setPitcher(playerPitcher);
     match.setHost(playerHost);
+    match.setHost(winner);
     try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
       transaction = session.beginTransaction();
       session.persist(match);

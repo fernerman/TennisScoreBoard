@@ -1,4 +1,4 @@
-package org.project.tennisscoreboard.model;
+package org.project.tennisscoreboard.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Score {
+public class ScoreOutputDTO {
 
-  private int point;
+  private String pointInTennisBoard;
   private int game;
   private int set;
 }
-
