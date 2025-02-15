@@ -1,27 +1,57 @@
 package org.project.tennisscoreboard.service;
 
-import org.project.tennisscoreboard.dto.WinnerLoserDTO;
+import java.util.UUID;
+import org.project.tennisscoreboard.model.MatchScore;
 import org.project.tennisscoreboard.model.Score;
 
-public class MatchScoreService {
+public class MatchScoreCalculationService {
 
-  private final static int[] POINT_VALUES = {0, 15, 30, 40};
-  private final static String DEUCE = "DE";
-  private final static String ADVANTAGE = "AD";
   private final static int MAX_GAMES_IN_SET = 6;
   private final static int MAX_POINTS_IN_TIE_BREAK = 7;
   private final static int MIN_DIFFERENCE_POINTS = 2;
+  private static final int MIN_POINTS_FOR_ADVANTAGE = 3;
+  private static final int ADVANTAGE_DIFFERENCE = 1;
 
-  public WinnerLoserDTO updateScore(WinnerLoserDTO winnerLoserDTO) {
-    Score scoreWinner = winnerLoserDTO.getWinnerScore();
-    Score scoreLoser = winnerLoserDTO.getLoserScore();
+  public MatchScore updateMatchScore(MatchScore matchScore, UUID winnerId) {
+    Score scorePlayer1 = matchScore.getScorePitcher();
+    Score scorePlayer2 = matchScore.getScoreHost();
+
+    if (winnerId.equals(matchScore.getPlayerPitcher().getId())) {
+      updateScore(scorePlayer1, scorePlayer2);
+    } else if (winnerId.equals(matchScore.getPlayerHost().getId())) {
+      updateScore(scorePlayer2, scorePlayer1);
+    } else {
+      throw new IllegalArgumentException("Unknown player ID: " + winnerId);
+    }
+    return matchScore;
+  }
+
+  private void updateScore(Score scoreWinner, Score scoreLoser) {
     if (!isTieBreak(scoreWinner.getGame(), scoreLoser.getGame())) {
       updatePoints(scoreWinner, scoreLoser);
       updateGames(scoreWinner, scoreLoser);
     } else {
       updatePointsInTieBreak(scoreWinner, scoreLoser);
     }
-    return winnerLoserDTO;
+  }
+
+  public boolean isDeuce(Score scoreWinner, Score scoreLoser) {
+    int winnerPoints = scoreWinner.getPoint();
+    int loserPoints = scoreLoser.getPoint();
+    return loserPoints >= MIN_POINTS_FOR_ADVANTAGE
+        && winnerPoints == loserPoints;
+  }
+
+  public boolean isAdvantage(Score scoreWinner, Score scoreLoser) {
+    int winnerPoints = scoreWinner.getPoint();
+    int loserPoints = scoreLoser.getPoint();
+    return winnerPoints >= MIN_POINTS_FOR_ADVANTAGE
+        && loserPoints >= MIN_POINTS_FOR_ADVANTAGE
+        && (winnerPoints - loserPoints == ADVANTAGE_DIFFERENCE);
+  }
+
+  public boolean isEndMatchScore(MatchScore matchScore) {
+    return checkWinSet(matchScore.getScorePitcher(), matchScore.getScoreHost());
   }
 
   public boolean checkWinSet(Score score1, Score score2) {
@@ -29,9 +59,10 @@ public class MatchScoreService {
   }
 
   public void updatePointsInTieBreak(Score currentPlayerScore, Score nextPlayerScore) {
-    int currentWinnerPoints = currentPlayerScore.getPoint();
+    currentPlayerScore.setPoint(currentPlayerScore.getPoint() + 1);
+
     int currentLostPoints = nextPlayerScore.getPoint();
-    currentPlayerScore.setPoint(currentWinnerPoints + 1);
+    int currentWinnerPoints = currentPlayerScore.getPoint();
     if (checkWinTieBreak(currentWinnerPoints, currentLostPoints)) {
       currentPlayerScore.setSet(currentPlayerScore.getSet() + 1);
       currentPlayerScore.setPoint(0);
@@ -55,17 +86,6 @@ public class MatchScoreService {
     }
   }
 
-  public String getFormattingPoints(Score currentPlayerScore, Score nextPlayerScore) {
-    if (currentPlayerScore.getPoint() < POINT_VALUES.length) {
-      return String.valueOf(POINT_VALUES[currentPlayerScore.getPoint()]);
-    } else if (currentPlayerScore.getPoint() > nextPlayerScore.getPoint()) {
-      return ADVANTAGE;
-    } else if (currentPlayerScore.getPoint() == nextPlayerScore.getPoint()) {
-      return DEUCE;
-    }
-    return "";
-  }
-
   private void resetPoints(Score player1, Score player2) {
     player1.setPoint(0);
     player2.setPoint(0);
@@ -76,21 +96,21 @@ public class MatchScoreService {
     player2.setGame(0);
   }
 
-  public boolean checkWinInGame(int currentWinnerPoints, int currentLostPoints) {
-    return currentWinnerPoints >= POINT_VALUES.length
+  private boolean checkWinInGame(int currentWinnerPoints, int currentLostPoints) {
+    return currentWinnerPoints >= 4
         && currentWinnerPoints - currentLostPoints >= MIN_DIFFERENCE_POINTS;
   }
 
-  public boolean checkWinInSet(int currentWinnerGames, int currentLostGames) {
+  private boolean checkWinInSet(int currentWinnerGames, int currentLostGames) {
     return currentWinnerGames >= MAX_GAMES_IN_SET
         && currentWinnerGames - currentLostGames >= MIN_DIFFERENCE_POINTS;
   }
 
-  public boolean isTieBreak(int currentWinnerGames, int currentLostGames) {
+  private boolean isTieBreak(int currentWinnerGames, int currentLostGames) {
     return currentWinnerGames == MAX_GAMES_IN_SET && currentLostGames == MAX_GAMES_IN_SET;
   }
 
-  public boolean checkWinTieBreak(int currentWinnerGames, int currentLostGames) {
+  private boolean checkWinTieBreak(int currentWinnerGames, int currentLostGames) {
     return currentWinnerGames >= MAX_POINTS_IN_TIE_BREAK
         && currentWinnerGames - currentLostGames >= MIN_DIFFERENCE_POINTS;
   }
