@@ -1,18 +1,18 @@
-package org.project.tennisscoreboard.dto;
+package org.project.tennisscoreboard.model;
 
-import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.project.tennisscoreboard.model.Score;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@Builder
 public class MatchScore {
 
-  private UUID playerPitcherId;
-  private UUID playerHostId;
+  private Player playerPitcher;
+  private Player playerHost;
   private Score scorePitcher;
   private Score scoreHost;
 }
