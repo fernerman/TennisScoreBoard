@@ -10,22 +10,24 @@ import org.project.tennisscoreboard.util.SessionFactoryUtil;
 
 public class MatchDao {
 
-  public Optional<Match> create(Player playerPitcher, Player playerHost) throws SQLException {
+  public Match create(Player playerPitcher, Player playerHost, Player winner)
+      throws SQLException {
     Transaction transaction = null;
     Match match = new Match();
     match.setPitcher(playerPitcher);
     match.setHost(playerHost);
+    match.setWinner(winner);
     try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
       transaction = session.beginTransaction();
       session.persist(match);
       transaction.commit();
-      return Optional.of(match);
+      return Optional.of(match).orElseThrow(() -> new SQLException("Not created match"));
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
-        throw new SQLException();
+        throw new SQLException("Match creation failed", e);
       }
     }
-    return Optional.empty();
+    throw new SQLException("Failed to create match");
   }
 }
