@@ -1,17 +1,19 @@
 package org.project.tennisscoreboard.dao;
 
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.List;
+import lombok.SneakyThrows;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.project.tennisscoreboard.model.Match;
-import org.project.tennisscoreboard.model.Player;
+import org.hibernate.query.Query;
+import org.project.tennisscoreboard.model.entity.Match;
+import org.project.tennisscoreboard.model.entity.Player;
 import org.project.tennisscoreboard.util.SessionFactoryUtil;
 
 public class MatchDao {
 
-  public Match create(Player playerPitcher, Player playerHost, Player winner)
-      throws SQLException {
+  @SneakyThrows
+  public void create(Player playerPitcher, Player playerHost, Player winner) {
     Transaction transaction = null;
     Match match = new Match();
     match.setPitcher(playerPitcher);
@@ -21,13 +23,21 @@ public class MatchDao {
       transaction = session.beginTransaction();
       session.persist(match);
       transaction.commit();
-      return Optional.of(match).orElseThrow(() -> new SQLException("Not created match"));
     } catch (Exception e) {
       if (transaction != null) {
         transaction.rollback();
-        throw new SQLException("Match creation failed", e);
       }
+      throw new SQLException("Match creation failed", e);
     }
-    throw new SQLException("Failed to create match");
+  }
+
+  @SneakyThrows
+  public List<Match> findAll() {
+    try (Session session = SessionFactoryUtil.getSessionFactory().openSession()) {
+      Query<Match> query = session.createQuery("FROM Match", Match.class);
+      return query.getResultList();
+    } catch (Exception e) {
+      throw new SQLException();
+    }
   }
 }
