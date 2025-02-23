@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.project.tennisscoreboard.model.entity.Player;
 
 @Getter
 @Setter
@@ -13,6 +14,6 @@ public class MatchScore {
 
   private Player playerPitcher;
   private Player playerHost;
-  private Score scorePitcher;
-  private Score scoreHost;
+  private Score pitcherScore;
+  private Score hostScore;
 }
