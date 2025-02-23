@@ -1,29 +1,27 @@
 package org.project.tennisscoreboard.util;
 
-import org.project.tennisscoreboard.model.MatchScore;
+import lombok.experimental.UtilityClass;
 import org.project.tennisscoreboard.model.Score;
+import org.project.tennisscoreboard.service.MatchScoreCalculationService;
 
+@UtilityClass
 public class ScoreFormatter {
 
-  public static final String DEUCE = "DE";
+  public static final String DEUCE = "40";
   public static final String ADVANTAGE = "AD";
-  private static final int MIN_POINTS_FOR_ADVANTAGE = 3;
-  private static final int ADVANTAGE_DIFFERENCE = 1;
   private static final int[] POINT_VALUES = {0, 15, 30, 40};
+  private static final MatchScoreCalculationService serviceScore = new MatchScoreCalculationService();
 
-  public String getFormattingPoints(MatchScore matchScore) {
-    Score currentPlayerScore = matchScore.getScorePitcher();
-    Score nextPlayerScore = matchScore.getScoreHost();
+  public String getFormattingPoints(Score currentPlayerScore, Score nextPlayerScore) {
     int currentWinnerPoints = currentPlayerScore.getPoint();
-    int currentLoserPoints = nextPlayerScore.getPoint();
 
-    if (currentWinnerPoints >= MIN_POINTS_FOR_ADVANTAGE
-        && currentLoserPoints >= MIN_POINTS_FOR_ADVANTAGE) {
-      if (currentWinnerPoints - currentLoserPoints == ADVANTAGE_DIFFERENCE) {
-        return ADVANTAGE;
-      } else if (currentWinnerPoints == currentLoserPoints) {
-        return DEUCE;
-      }
+    if (serviceScore.isTieBreak(currentPlayerScore, nextPlayerScore)) {
+      return String.valueOf(currentPlayerScore.getPoint());
+    } else if (serviceScore.isAdvantage(currentPlayerScore, nextPlayerScore)) {
+      return ADVANTAGE;
+    } else if (serviceScore.isDeuce(currentPlayerScore, nextPlayerScore)
+        || currentPlayerScore.getPoint() >= 3) {
+      return DEUCE;
     }
     return String.valueOf(POINT_VALUES[currentWinnerPoints]);
   }

@@ -13,8 +13,8 @@ public class MatchScoreCalculationService {
   private static final int ADVANTAGE_DIFFERENCE = 1;
 
   public MatchScore updateMatchScore(MatchScore matchScore, UUID winnerId) {
-    Score scorePlayer1 = matchScore.getScorePitcher();
-    Score scorePlayer2 = matchScore.getScoreHost();
+    Score scorePlayer1 = matchScore.getPitcherScore();
+    Score scorePlayer2 = matchScore.getHostScore();
 
     if (winnerId.equals(matchScore.getPlayerPitcher().getId())) {
       updateScore(scorePlayer1, scorePlayer2);
@@ -27,7 +27,7 @@ public class MatchScoreCalculationService {
   }
 
   private void updateScore(Score scoreWinner, Score scoreLoser) {
-    if (!isTieBreak(scoreWinner.getGame(), scoreLoser.getGame())) {
+    if (!isTieBreak(scoreWinner, scoreLoser)) {
       updatePoints(scoreWinner, scoreLoser);
       updateGames(scoreWinner, scoreLoser);
     } else {
@@ -50,8 +50,12 @@ public class MatchScoreCalculationService {
         && (winnerPoints - loserPoints == ADVANTAGE_DIFFERENCE);
   }
 
+  public boolean isTieBreak(Score scoreWinner, Score scoreLoser) {
+    return scoreWinner.getGame() == MAX_GAMES_IN_SET && scoreLoser.getGame() == MAX_GAMES_IN_SET;
+  }
+
   public boolean isEndMatchScore(MatchScore matchScore) {
-    return checkWinSet(matchScore.getScorePitcher(), matchScore.getScoreHost());
+    return checkWinSet(matchScore.getPitcherScore(), matchScore.getHostScore());
   }
 
   public boolean checkWinSet(Score score1, Score score2) {
@@ -104,10 +108,6 @@ public class MatchScoreCalculationService {
   private boolean checkWinInSet(int currentWinnerGames, int currentLostGames) {
     return currentWinnerGames >= MAX_GAMES_IN_SET
         && currentWinnerGames - currentLostGames >= MIN_DIFFERENCE_POINTS;
-  }
-
-  private boolean isTieBreak(int currentWinnerGames, int currentLostGames) {
-    return currentWinnerGames == MAX_GAMES_IN_SET && currentLostGames == MAX_GAMES_IN_SET;
   }
 
   private boolean checkWinTieBreak(int currentWinnerGames, int currentLostGames) {

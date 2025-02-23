@@ -1,4 +1,4 @@
-package org.project.tennisscoreboard.model;
+package org.project.tennisscoreboard.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
