@@ -8,8 +8,8 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.project.tennisscoreboard.model.MatchScore;
-import org.project.tennisscoreboard.model.Player;
 import org.project.tennisscoreboard.model.Score;
+import org.project.tennisscoreboard.model.entity.Player;
 
 class MatchScoreCalculationServiceTest {
 
@@ -33,28 +33,28 @@ class MatchScoreCalculationServiceTest {
   @Test
   void testUpdateMatchScore_Player1WinsPoint() {
     matchScoreCalculationService.updateMatchScore(matchScore, player1Id);
-    assertEquals(1, matchScore.getScorePitcher().getPoint());
-    assertEquals(0, matchScore.getScoreHost().getPoint());
+    assertEquals(1, matchScore.getPitcherScore().getPoint());
+    assertEquals(0, matchScore.getHostScore().getPoint());
   }
 
   @Test
   void testUpdateMatchScore_Player2WinsPoint() {
     matchScoreCalculationService.updateMatchScore(matchScore, player2Id);
-    assertEquals(0, matchScore.getScorePitcher().getPoint());
-    assertEquals(1, matchScore.getScoreHost().getPoint());
+    assertEquals(0, matchScore.getPitcherScore().getPoint());
+    assertEquals(1, matchScore.getHostScore().getPoint());
   }
 
   @Test
   void testUpdateMatchScore_PlayerWinsGame() {
     Score score1 = new Score(3, 0, 0);
     Score score2 = new Score(2, 0, 0);
-    matchScore.setScorePitcher(score1);
-    matchScore.setScoreHost(score2);
+    matchScore.setPitcherScore(score1);
+    matchScore.setHostScore(score2);
 
     matchScoreCalculationService.updateMatchScore(matchScore, player1Id);
-    assertEquals(1, matchScore.getScorePitcher().getGame());
-    assertEquals(0, matchScore.getScorePitcher().getPoint());
-    assertEquals(0, matchScore.getScoreHost().getPoint());
+    assertEquals(1, matchScore.getPitcherScore().getGame());
+    assertEquals(0, matchScore.getPitcherScore().getPoint());
+    assertEquals(0, matchScore.getHostScore().getPoint());
   }
 
   @Test
@@ -62,11 +62,11 @@ class MatchScoreCalculationServiceTest {
     Score scorePlayer1 = new Score(3, 0, 0);
     Score scorePlayer2 = new Score(3, 0, 0);
 
-    matchScore.setScorePitcher(scorePlayer1);
-    matchScore.setScoreHost(scorePlayer2);
+    matchScore.setPitcherScore(scorePlayer1);
+    matchScore.setHostScore(scorePlayer2);
 
     assertTrue(matchScoreCalculationService.isDeuce(
-            matchScore.getScorePitcher(), matchScore.getScoreHost()),
+            matchScore.getPitcherScore(), matchScore.getHostScore()),
         "deuce matchScore should be true");
   }
 
@@ -75,47 +75,47 @@ class MatchScoreCalculationServiceTest {
     Score scorePlayer1 = new Score(3, 0, 0);
     Score scorePlayer2 = new Score(3, 0, 0);
 
-    matchScore.setScorePitcher(scorePlayer1);
-    matchScore.setScoreHost(scorePlayer2);
+    matchScore.setPitcherScore(scorePlayer1);
+    matchScore.setHostScore(scorePlayer2);
     matchScoreCalculationService.updateMatchScore(matchScore, player1Id);
     assertTrue(
-        matchScoreCalculationService.isAdvantage(matchScore.getScorePitcher(),
-            matchScore.getScoreHost()),
+        matchScoreCalculationService.isAdvantage(matchScore.getPitcherScore(),
+            matchScore.getHostScore()),
         "player1 has advantage and should be deuce is true");
 
     matchScoreCalculationService.updateMatchScore(matchScore, player1Id);
-    assertEquals(1, matchScore.getScorePitcher().getGame());
+    assertEquals(1, matchScore.getPitcherScore().getGame());
   }
 
   @Test
   void testUpdateMatchScore_PlayerWinsSet() {
     Score score1 = new Score(3, 5, 0);
     Score score2 = new Score(2, 4, 0);
-    matchScore.setScorePitcher(score1);
-    matchScore.setScoreHost(score2);
+    matchScore.setPitcherScore(score1);
+    matchScore.setHostScore(score2);
 
     matchScoreCalculationService.updateMatchScore(matchScore, player1Id);
-    assertEquals(1, matchScore.getScorePitcher().getSet());
-    assertEquals(0, matchScore.getScorePitcher().getPoint());
-    assertEquals(0, matchScore.getScoreHost().getGame());
+    assertEquals(1, matchScore.getPitcherScore().getSet());
+    assertEquals(0, matchScore.getPitcherScore().getPoint());
+    assertEquals(0, matchScore.getHostScore().getGame());
   }
 
   @Test
   void testUpdateMatchScore_PlayerWinsSetInTieBreak() {
     Score score1 = new Score(6, 6, 0);
     Score score2 = new Score(5, 6, 0);
-    matchScore.setScorePitcher(score1);
-    matchScore.setScoreHost(score2);
+    matchScore.setPitcherScore(score1);
+    matchScore.setHostScore(score2);
     matchScoreCalculationService.updateMatchScore(matchScore, player1Id);
-    assertEquals(1, matchScore.getScorePitcher().getSet());
+    assertEquals(1, matchScore.getPitcherScore().getSet());
   }
 
   @Test
   void testEndMatch() {
     Score score1 = new Score(6, 6, 2);
     Score score2 = new Score(5, 5, 2);
-    matchScore.setScorePitcher(score1);
-    matchScore.setScoreHost(score2);
+    matchScore.setPitcherScore(score1);
+    matchScore.setHostScore(score2);
     matchScoreCalculationService.updateMatchScore(matchScore, player1Id);
     assertTrue(matchScoreCalculationService.isEndMatchScore(matchScore));
   }
