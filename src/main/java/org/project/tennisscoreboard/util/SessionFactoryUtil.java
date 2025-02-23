@@ -11,6 +11,7 @@ public class SessionFactoryUtil {
 
   static {
     try {
+      Class.forName("org.h2.Driver");
       sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     } catch (Throwable ex) {
       System.err.println("SessionFactory initialization failed: " + ex);
