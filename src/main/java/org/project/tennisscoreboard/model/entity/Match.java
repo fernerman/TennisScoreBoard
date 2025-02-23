@@ -1,5 +1,6 @@
-package org.project.tennisscoreboard.model;
+package org.project.tennisscoreboard.model.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -20,17 +21,18 @@ public class Match {
 
   @Id
   @GeneratedValue
+  @Column(name = "ID")
   private UUID id;
 
   @ManyToOne
-  @JoinColumn(name = "PLAYER_PITCHER_ID", nullable = false)
+  @JoinColumn(name = "PLAYER1", nullable = false)
   private Player pitcher;
 
   @ManyToOne
-  @JoinColumn(name = "PLAYER_HOST_ID", nullable = false)
+  @JoinColumn(name = "PLAYER2", nullable = false)
   private Player host;
 
   @ManyToOne
-  @JoinColumn(name = "WINNER_ID")
+  @JoinColumn(name = "WINNER")
   private Player winner;
 }
